@@ -10,18 +10,20 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QVBoxLayout,
     QPushButton, QTextEdit, QFormLayout, QHBoxLayout, QDoubleSpinBox
 from pix2tex.resources import resources
 from pynput.mouse import Controller
-
+from system_hotkey import SystemHotkey
 from PIL import ImageGrab, Image
 import numpy as np
 from screeninfo import get_monitors
 from pix2tex import cli
 from pix2tex.utils import in_model_path
+from pynput import keyboard
 
 QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 
 class App(QMainWindow):
+    shot = pyqtSignal(dict)
     isProcessing = False
 
     def __init__(self, args=None):
@@ -56,17 +58,15 @@ class App(QMainWindow):
         self.tempField.setValue(self.args.temperature)
         self.tempField.setRange(0, 1)
         self.tempField.setSingleStep(0.1)
-
+        self.shot.connect(self.onClick)
         # Create snip button
         if sys.platform == "darwin":
-                self.snipButton = QPushButton('Snip [Option+S]', self)
-                self.snipButton.clicked.connect(self.onClick) 
-        else:
-                self.snipButton = QPushButton('Snip [Alt+S]', self)
+                self.snipButton = QPushButton('Snip [Ctrl+Cmd+M]', self)
                 self.snipButton.clicked.connect(self.onClick)
 
-        self.shortcut = QShortcut(QKeySequence("Alt+S"), self)
-        self.shortcut.activated.connect(self.onClick)
+        else:
+                self.snipButton = QPushButton('Snip [Ctrl+Alt+M]', self)
+                self.snipButton.clicked.connect(self.onClick)
 
         # Create retry button
         self.retryButton = QPushButton('Retry', self)
@@ -108,7 +108,7 @@ class App(QMainWindow):
         self.snipButton.setText(text)
         self.snipButton.clicked.disconnect()
         self.snipButton.clicked.connect(func)
-        self.displayPrediction() 
+        self.displayPrediction()
 
     @pyqtSlot()
     def onClick(self):
@@ -304,10 +304,38 @@ class SnipWidget(QMainWindow):
         self.end = QtCore.QPoint()
         self.parent.returnSnip(img)
 
+
 def main(arguments):
+    ex: App
+    current = set()
+    # The key combination to check
+    COMBINATIONS = [
+        {keyboard.Key.ctrl, keyboard.Key.cmd, keyboard.KeyCode(char='m')},
+        {keyboard.Key.ctrl, keyboard.Key.cmd, keyboard.KeyCode(char='M')}
+    ]
+    def execute():
+        ex.shot.emit({"success": False, "prediction": None})
+        current.clear()
+
+    def on_press(key):
+        if any([key in COMBO for COMBO in COMBINATIONS]):
+            current.add(key)
+            if any(all(k in current for k in COMBO) for COMBO in COMBINATIONS):
+                execute()
+
+    def on_release(key):
+        if key in current:
+            current.remove(key)
     with in_model_path():
+        listener = keyboard.Listener(on_press=on_press, on_release=on_release)
+        listener.start()
+        listener.wait()
         if os.name != 'nt':
             os.environ['QTWEBENGINE_DISABLE_SANDBOX'] = '1'
         app = QApplication(sys.argv)
         ex = App(arguments)
+
         sys.exit(app.exec())
+
+
+
