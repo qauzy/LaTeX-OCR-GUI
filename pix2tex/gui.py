@@ -10,7 +10,6 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QVBoxLayout,
     QPushButton, QTextEdit, QFormLayout, QHBoxLayout, QDoubleSpinBox
 from pix2tex.resources import resources
 from pynput.mouse import Controller
-from system_hotkey import SystemHotkey
 from PIL import ImageGrab, Image
 import numpy as np
 from screeninfo import get_monitors
