@@ -103,7 +103,6 @@ class App(QMainWindow):
                 text = 'Snip [Alt+S]'
             func = self.onClick
             self.retryButton.setEnabled(True)
-        self.shortcut.setEnabled(not self.isProcessing)
         self.snipButton.setText(text)
         self.snipButton.clicked.disconnect()
         self.snipButton.clicked.connect(func)
