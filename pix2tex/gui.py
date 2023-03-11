@@ -285,6 +285,11 @@ class SnipWidget(QMainWindow):
         y1 = int(min(startPos[1], endPos[1]))
         x2 = int(max(startPos[0], endPos[0]))
         y2 = int(max(startPos[1], endPos[1]))
+        if x1 == x2 and y1 == y2:
+            QApplication.restoreOverrideCursor()
+            self.close()
+            self.parent.show()
+            return
 
         self.repaint()
         QApplication.processEvents()
