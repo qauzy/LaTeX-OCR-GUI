@@ -98,9 +98,9 @@ class App(QMainWindow):
             func = self.interrupt
         else:
             if sys.platform == "darwin":
-                text = 'Snip [Option+S]'
+                text = 'Snip [Ctrl+Cmd+M]'
             else: 
-                text = 'Snip [Alt+S]'
+                text = 'Snip [Ctrl+Alt+M]'
             func = self.onClick
             self.retryButton.setEnabled(True)
         self.snipButton.setText(text)
