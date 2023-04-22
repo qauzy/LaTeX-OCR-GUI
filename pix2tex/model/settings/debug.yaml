@@ -15,7 +15,7 @@ batchsize: 8
 # Testing parameters
 testbatchsize: 20
 valbatches: 100
-temperature: 0.2
+temperature: 0.4
 
 # Optimizer configurations
 optimizer: "Adam"

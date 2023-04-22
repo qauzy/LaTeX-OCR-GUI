@@ -1,5 +1,6 @@
 # Adapted from https://github.com/kingyiusuen/image-to-latex/blob/main/api/app.py
-
+import base64
+import json
 from http import HTTPStatus
 from fastapi import FastAPI, File, UploadFile, Form
 from PIL import Image
@@ -46,6 +47,23 @@ async def predict(file: UploadFile = File(...)) -> str:
     global model
     image = Image.open(file.file)
     return model(image)
+@app.post('/pix/')
+async def pix(file: str = Form(...)):
+    """Predict the Latex code from an image file.
+
+    Args:
+        file (UploadFile, optional): Image to predict. Defaults to File(...).
+
+    Returns:
+        str: Latex prediction
+    """
+    global model
+    byte_data = base64.b64decode(file)
+    image_data = BytesIO(byte_data)
+    image = Image.open(image_data)
+    res = model(image)
+    result = {"log_id":0, "words_result_num":0,"words_result": [{"words":res}], "error_msg": "","error_code":0}
+    return result
 
 
 @app.post('/bytes/')

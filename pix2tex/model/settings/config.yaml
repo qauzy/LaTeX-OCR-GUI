@@ -47,7 +47,7 @@ save_freq: 5
 scheduler: StepLR
 seed: 42
 encoder_structure: hybrid
-temperature: 0.2
+temperature: 0.4
 test_samples: 5
 testbatchsize: 20
 tokenizer: dataset/tokenizer.json
