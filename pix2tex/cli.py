@@ -69,7 +69,7 @@ class LatexOCR:
             arguments (Union[Namespace, Munch], optional): Special model parameters. Defaults to None.
         """
         if arguments is None:
-            arguments = Munch({'config': 'settings/config.yaml', 'checkpoint': os.environ['HOME']+'/lator/weights.pth', 'no_cuda': True, 'no_resize': False})
+            arguments = Munch({'config': 'settings/config.yaml', 'checkpoint': os.environ['HOME']+'/lator/weights.pth', 'no_cuda': False, 'no_resize': False})
         logging.getLogger().setLevel(logging.FATAL)
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         with open(arguments.config, 'r') as f:
