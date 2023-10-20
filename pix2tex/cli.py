@@ -72,7 +72,6 @@ class LatexOCR:
             arguments = Munch({'config': 'settings/config.yaml', 'checkpoint': os.environ['HOME']+'/lator/weights.pth', 'no_cuda': True, 'no_resize': False})
         logging.getLogger().setLevel(logging.FATAL)
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-        print(self.args.checkpoint)
         with open(arguments.config, 'r') as f:
             params = yaml.load(f, Loader=yaml.FullLoader)
         self.args = parse_args(Munch(params))

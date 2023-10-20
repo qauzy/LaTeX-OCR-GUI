@@ -4,7 +4,7 @@ import os
 
 
 def start_api(path='.'):
-    subprocess.call(['uvicorn', 'app:app', '--port', '8502'], cwd=path)
+    subprocess.call(['uvicorn', 'app:app', '--host','0.0.0.0','--port', '8502'], cwd=path)
 
 
 def start_frontend(path='.'):
